@@ -35,18 +35,15 @@ export async function addCursorRuleCommand(context: vscode.ExtensionContext) {
 
         const items: RuleQuickPickItem[] = [];
         rulesByRepo.forEach((repoRules, repoUrl) => {
-            // Add a separator item for the repository
-            items.push({
-                label: `$(repo) ${repoUrl}`,
-                kind: vscode.QuickPickItemKind.Separator,
-                rule: null
-            });
+            // Skip repository separator headers - they will no longer be displayed
             
-            // Add rule items
+            // Add rule items with repository information
             repoRules.forEach(rule => {
+
                 items.push({
-                    label: rule.name,
-                    description: rule.repoUrl, // Could add additional info here
+                    label: `$(file) ${rule.name}`,
+                    description: '', // Show friendly repo name
+                    detail: rule.repoUrl, // Show full repo URL in detail
                     rule
                 });
             });
@@ -90,4 +87,4 @@ export async function addCursorRuleCommand(context: vscode.ExtensionContext) {
 
 interface RuleQuickPickItem extends vscode.QuickPickItem {
     rule: Rule | null;
-} 
+}

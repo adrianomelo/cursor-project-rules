@@ -72,23 +72,17 @@ export async function addMultipleRulesCommand(context: vscode.ExtensionContext) 
         // Create quick pick items with repository groups
         const items: RuleQuickPickItem[] = [];
         rulesByRepo.forEach((repoRules, repoUrl) => {
-            // Add a separator item for the repository with a nicer display name
+            // Skip repository separator headers - they will no longer be displayed
             const repoDisplayName = getRepoDisplayName(repoUrl);
-            items.push({
-                label: `$(repo) ${repoDisplayName}`,
-                description: repoUrl,
-                kind: vscode.QuickPickItemKind.Separator,
-                rule: null
-            });
             
-            // Add rule items with checkbox indicators in the label
+            // Add rule items with checkbox indicators in the label and repository information
             repoRules.forEach(rule => {
                 const isInstalled = installedRuleNames.includes(rule.name);
                 items.push({
                     // Use Unicode checkbox symbols to emphasize selection state
                     label: `$(check-square) ${rule.name}`,
-                    description: isInstalled ? '$(check) Already installed' : '',
-                    detail: `From: ${repoDisplayName} (${repoUrl})`,
+                    description: `${repoDisplayName} ${isInstalled ? '$(check) Already installed' : ''}`,
+                    detail: repoUrl,
                     rule: rule,
                     alwaysShow: isInstalled // Always show installed rules
                 });
