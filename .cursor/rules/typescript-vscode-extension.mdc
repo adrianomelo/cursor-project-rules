@@ -3,9 +3,9 @@ description:
 globs: 
 alwaysApply: false
 ---
-# Cursor Rules Extension Development Guidelines
+# Cursor Project Rules Extension Development Guidelines
 
-This document outlines best practices for developing and maintaining the Cursor Rules extension, which manages `.mdc` rule files from Git repositories to enhance AI coding assistance.
+This document outlines best practices for developing and maintaining the Cursor Project Rules extension, which manages `.mdc` rule files from Git repositories to enhance AI coding assistance.
 
 ## 1. Extension Architecture
 
@@ -13,7 +13,7 @@ This document outlines best practices for developing and maintaining the Cursor 
 
 * **Core Components:**
   ```
-  cursor-rules-extension/
+  cursor-project-rules/
   ├── src/
   │   ├── extension.ts                # Entry point, registers commands
   │   ├── commands/                   # Command implementations
@@ -97,7 +97,7 @@ This document outlines best practices for developing and maintaining the Cursor 
 
 * **Storage:** Use VS Code settings to store repository configurations:
   ```json
-  "cursorRules.repositories": [
+  "cursorProjectRules.repositories": [
     {
       "url": "https://github.com/username/repo.git",
       "enabled": true,
@@ -244,4 +244,4 @@ This document outlines best practices for developing and maintaining the Cursor 
 * **Changelog:** Maintain a clear changelog
 * **Update Notifications:** Consider notifying users of new versions
 
-By following these guidelines, the Cursor Rules extension will provide a robust and user-friendly way to manage AI coding assistance rules from multiple repositories. 
+By following these guidelines, the Cursor Project Rules extension will provide a robust and user-friendly way to manage AI coding assistance rules from multiple repositories. 
