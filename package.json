@@ -1,0 +1,116 @@
+{
+  "name": "cursor-rules-extension",
+  "displayName": "Cursor Rules",
+  "description": "Fetch, install, and manage .mdc rule files from Git repositories to customize AI behavior in Cursor. Configure multiple rule sources and deploy them to your workspace.",
+  "version": "1.0.0",
+  "author": "Adriano Melo",
+  "publisher": "adrianomelo",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:cursorRules.addRule",
+    "onCommand:cursorRules.addAllRules",
+    "onCommand:cursorRules.refreshRepositories",
+    "onCommand:cursorRules.manageRepositories"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cursorRules.addRule",
+        "title": "Cursor Rules: Add Specific Rules"
+      },
+      {
+        "command": "cursorRules.addAllRules",
+        "title": "Cursor Rules: Add All Available Rules"
+      },
+      {
+        "command": "cursorRules.refreshRepositories",
+        "title": "Cursor Rules: Refresh Rule Repositories"
+      },
+      {
+        "command": "cursorRules.manageRepositories",
+        "title": "Cursor Rules: Manage Rule Repositories"
+      }
+    ],
+    "configuration": {
+      "title": "Cursor Rules",
+      "properties": {
+        "cursorRules.repositories": {
+          "type": "array",
+          "default": [
+            {
+              "url": "https://github.com/adrianomelo/cursor-rules.git",
+              "enabled": true,
+              "branch": "main",
+              "rulesDir": "rules",
+              "autoUpdate": true
+            }
+          ],
+          "description": "Git repositories containing cursor rules",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL of the git repository"
+              },
+              "enabled": {
+                "type": "boolean",
+                "description": "Whether this repository is enabled",
+                "default": true
+              },
+              "branch": {
+                "type": "string",
+                "description": "Branch to checkout",
+                "default": "main"
+              },
+              "rulesDir": {
+                "type": "string",
+                "description": "Directory containing the rules (relative to repository root)",
+                "default": "rules"
+              },
+              "autoUpdate": {
+                "type": "boolean",
+                "description": "Automatically update repository on extension activation",
+                "default": true
+              }
+            },
+            "required": [
+              "url"
+            ]
+          }
+        },
+        "cursorRules.localRulesDir": {
+          "type": "string",
+          "default": ".cursor/rules",
+          "description": "Local directory where rules will be installed (relative to workspace root)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "simple-git": "^3.27.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adrianomelo/cursor-rules-extension.git"
+  }
+}

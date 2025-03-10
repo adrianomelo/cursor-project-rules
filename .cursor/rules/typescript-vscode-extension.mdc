@@ -1,0 +1,247 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Cursor Rules Extension Development Guidelines
+
+This document outlines best practices for developing and maintaining the Cursor Rules extension, which manages `.mdc` rule files from Git repositories to enhance AI coding assistance.
+
+## 1. Extension Architecture
+
+### 1.1. Project Structure
+
+* **Core Components:**
+  ```
+  cursor-rules-extension/
+  ├── src/
+  │   ├── extension.ts                # Entry point, registers commands
+  │   ├── commands/                   # Command implementations
+  │   │   ├── addCursorRule.ts        # UI for selecting and adding rules
+  │   │   ├── addAllRules.ts          # Adds all available rules
+  │   │   ├── refreshRepositories.ts  # Updates rule repositories
+  │   │   ├── manageRepositories.ts   # UI for repository management
+  │   │   ├── commandA.ts
+  │   │   ├── commandB.ts
+  │   ├── utils/                      # Utility modules
+  │   │   ├── ruleManager.ts          # Manages rule loading and installation
+  │   │   ├── repositoryManager.ts    # Handles Git repositories
+  │   │   ├── githubApi.ts            # GitHub API integration
+  │   │   ├── cache.ts                # Caching utilities
+  │   ├── models/                     # Type definitions and models
+  │   │   ├── types.ts
+  ├── package.json                    # Extension manifest
+  ├── tsconfig.json                   # TypeScript configuration
+  ├── .vscodeignore                   # Files to exclude from the extension package
+  ├── README.md
+  ```
+
+### 1.2. Manager Classes
+
+* **RuleManager:** Responsible for finding, loading, and installing `.mdc` rule files.
+* **RepositoryManager:** Handles Git repository operations (clone, pull, etc.).
+* **Both managers should implement the singleton pattern:**
+  ```typescript
+  export class RuleManager {
+      private static instance: RuleManager;
+      private constructor(private context: vscode.ExtensionContext) {
+          this.repositoryManager = RepositoryManager.getInstance(context);
+      }
+      
+      static getInstance(context: vscode.ExtensionContext): RuleManager {
+          if (!RuleManager.instance) {
+              RuleManager.instance = new RuleManager(context);
+          }
+          return RuleManager.instance;
+      }
+  }
+  ```
+
+## 2. Rule File Management
+
+### 2.1. Rule File Format (.mdc)
+
+* **Format:** `.mdc` files are Markdown files containing structured guidance.
+* **Content:** Rules should include:
+  - Clear title and description
+  - Organized sections with headings
+  - Code examples where appropriate
+  - Best practices and recommendations
+
+### 2.2. Rule Installation Process
+
+1. **Find Rules:** Scan enabled repositories for `.mdc` files
+2. **Copy Rules:** Copy the files to `.cursor/rules` in the user's workspace
+3. **Naming:** Preserve the original filename
+4. **Implementation:**
+   ```typescript
+   async installRule(rule: Rule): Promise<void> {
+       const localRulesDir = this.getLocalRulesDir();
+       
+       // Create rules directory if needed
+       if (!await exists(localRulesDir)) {
+           await mkdir(localRulesDir, { recursive: true });
+       }
+       
+       // Copy the .mdc file to the local directory
+       const ruleFilePath = path.join(rule.path, `${rule.name}.mdc`);
+       const targetFilePath = path.join(localRulesDir, `${rule.name}.mdc`);
+       
+       await copyFile(ruleFilePath, targetFilePath);
+   }
+   ```
+
+## 3. Repository Management
+
+### 3.1. Repository Configuration
+
+* **Storage:** Use VS Code settings to store repository configurations:
+  ```json
+  "cursorRules.repositories": [
+    {
+      "url": "https://github.com/username/repo.git",
+      "enabled": true,
+      "branch": "main",
+      "rulesDir": "rules",
+      "autoUpdate": true
+    }
+  ]
+  ```
+
+### 3.2. Repository Operations
+
+* **Clone:** Clone repositories to a global storage location
+  ```typescript
+  const repoPath = this.getRepoPath(repo.url);
+  await git.clone(repo.url, repoPath, ['--branch', repo.branch]);
+  ```
+* **Update:** Pull latest changes for repositories
+  ```typescript
+  const localGit = simpleGit(repoPath);
+  await localGit.checkout(repo.branch);
+  await localGit.pull();
+  ```
+* **Validation:** Verify repository structure after clone/update
+
+### 3.3. Repository Storage
+
+* **Location:** Store repositories in the extension's global storage path:
+  ```typescript
+  private repoStoragePath = path.join(context.globalStoragePath, 'repositories');
+  ```
+* **Naming:** Create unique directory names based on repository URLs:
+  ```typescript
+  private getRepoPath(repoUrl: string): string {
+      const repoName = repoUrl.split('/').pop()?.replace('.git', '') || 
+                       Buffer.from(repoUrl).toString('base64');
+      return path.join(this.repoStoragePath, repoName);
+  }
+  ```
+
+## 4. Command Implementation
+
+### 4.1. Add Rule Command
+
+* **Purpose:** Allow users to select and install specific rules
+* **Implementation:** Show a quick pick with available rules
+* **Process:**
+  1. Get all rules from all repositories
+  2. Present list to user for selection
+  3. Install selected rules
+
+### 4.2. Add All Rules Command
+
+* **Purpose:** Install all available rules
+* **Implementation:** Batch operation with progress display
+* **Process:**
+  1. Get all rules from all repositories
+  2. Install each rule with progress indicator
+  3. Report success/failure counts
+
+### 4.3. Refresh Repositories Command
+
+* **Purpose:** Update rule repositories to latest version
+* **Implementation:** Pull latest changes for all repositories
+* **Process:**
+  1. For each enabled repository
+  2. Check out specified branch
+  3. Pull latest changes
+
+### 4.4. Manage Repositories Command
+
+* **Purpose:** UI for adding, removing, and configuring repositories
+* **Implementation:** Multi-step quick picks for repository management
+* **Process:**
+  1. Show options (Add, Edit, Remove, etc.)
+  2. For Add: Collect repository details
+  3. For Edit/Remove: Select repository and perform action
+
+## 5. Error Handling
+
+### 5.1. Repository Errors
+
+* **Clone Failures:** Handle network issues, invalid URLs
+* **Authentication:** Support for authenticated repositories if needed
+* **Structure Issues:** Handle repositories with unexpected structure
+* **Error Reporting:** Provide clear error messages to users
+
+### 5.2. Rule Installation Errors
+
+* **File System Errors:** Handle permission issues, disk space problems
+* **Malformed Rules:** Deal with incorrectly formatted rule files
+* **Duplicate Rules:** Strategy for handling duplicate rule names
+
+## 6. Performance Considerations
+
+### 6.1. Caching
+
+* **Repository Content:** Cache repository content to avoid unnecessary clones
+* **Rule List:** Cache list of available rules for faster UI
+* **Implementation:**
+  ```typescript
+  export class Cache {
+      private static instance: Cache;
+      private cache: Map<string, { data: any, timestamp: number }> = new Map();
+      
+      static getInstance(context: vscode.ExtensionContext): Cache {
+          if (!Cache.instance) {
+              Cache.instance = new Cache();
+          }
+          return Cache.instance;
+      }
+      
+      get<T>(key: string): T | undefined {
+          const entry = this.cache.get(key);
+          if (entry && (Date.now() - entry.timestamp) < CACHE_TTL) {
+              return entry.data as T;
+          }
+          return undefined;
+      }
+      
+      set(key: string, data: any): void {
+          this.cache.set(key, { data, timestamp: Date.now() });
+      }
+  }
+  ```
+
+### 6.2. Lazy Operations
+
+* **Repository Cloning:** Clone repositories only when needed
+* **Rule Loading:** Load rule content only when selected
+* **Auto-Update:** Allow configurable auto-update to balance freshness and performance
+
+## 7. Distribution and Updates
+
+### 7.1. Extension Packaging
+
+* **VSIX Generation:** Create VSIX packages for distribution
+* **Asset Inclusion:** Ensure all necessary files are included
+* **Size Optimization:** Minimize package size by excluding development files
+
+### 7.2. Version Management
+
+* **Semantic Versioning:** Follow semantic versioning (MAJOR.MINOR.PATCH)
+* **Changelog:** Maintain a clear changelog
+* **Update Notifications:** Consider notifying users of new versions
+
+By following these guidelines, the Cursor Rules extension will provide a robust and user-friendly way to manage AI coding assistance rules from multiple repositories. 
