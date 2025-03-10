@@ -3,6 +3,7 @@ import { addCursorRuleCommand } from './commands/addCursorRule';
 import { addAllRulesCommand } from './commands/addAllRules';
 import { refreshRepositoriesCommand } from './commands/refreshRepositories';
 import { manageRepositoriesCommand } from './commands/manageRepositories';
+import { addMultipleRulesCommand } from './commands/addMultipleRules';
 import { RuleManager } from './utils/ruleManager';
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -28,6 +29,11 @@ export async function activate(context: vscode.ExtensionContext) {
     
     disposable = vscode.commands.registerCommand('cursorRules.manageRepositories', () => {
         return manageRepositoriesCommand(context);
+    });
+    context.subscriptions.push(disposable);
+    
+    disposable = vscode.commands.registerCommand('cursorRules.addMultipleRules', () => {
+        return addMultipleRulesCommand(context);
     });
     context.subscriptions.push(disposable);
     

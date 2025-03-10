@@ -2,7 +2,7 @@
   "name": "cursor-rules-extension",
   "displayName": "Cursor Rules",
   "description": "Fetch, install, and manage .mdc rule files from Git repositories to customize AI behavior in Cursor. Configure multiple rule sources and deploy them to your workspace.",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "Adriano Melo",
   "publisher": "adrianomelo",
   "icon": "images/icon.png",
@@ -15,6 +15,7 @@
   ],
   "activationEvents": [
     "onCommand:cursorRules.addRule",
+    "onCommand:cursorRules.addMultipleRules",
     "onCommand:cursorRules.addAllRules",
     "onCommand:cursorRules.refreshRepositories",
     "onCommand:cursorRules.manageRepositories"
@@ -25,6 +26,10 @@
       {
         "command": "cursorRules.addRule",
         "title": "Cursor Rules: Add Specific Rules"
+      },
+      {
+        "command": "cursorRules.addMultipleRules",
+        "title": "Cursor Rules: Add Multiple Rules"
       },
       {
         "command": "cursorRules.addAllRules",
@@ -50,6 +55,13 @@
               "enabled": true,
               "branch": "main",
               "rulesDir": "rules",
+              "autoUpdate": true
+            },
+            {
+              "url": "https://github.com/sanjeed5/awesome-cursor-rules-mdc.git",
+              "enabled": true,
+              "branch": "main",
+              "rulesDir": "rules-mdc",
               "autoUpdate": true
             }
           ],
