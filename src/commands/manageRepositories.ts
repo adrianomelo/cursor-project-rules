@@ -5,7 +5,7 @@ export async function manageRepositoriesCommand(context: vscode.ExtensionContext
     try {
         const repositoryManager = RepositoryManager.getInstance(context);
         
-        const config = vscode.workspace.getConfiguration('cursorRules');
+        const config = vscode.workspace.getConfiguration('cursorProjectRules');
         const repositories = config.get<Repository[]>('repositories') || [];
         
         const quickPick = vscode.window.createQuickPick();
@@ -128,7 +128,7 @@ async function refreshAllRepositories(repositoryManager: RepositoryManager): Pro
 }
 
 async function manageRepository(repositoryManager: RepositoryManager, repoUrl: string): Promise<void> {
-    const config = vscode.workspace.getConfiguration('cursorRules');
+    const config = vscode.workspace.getConfiguration('cursorProjectRules');
     const repositories = config.get<Repository[]>('repositories') || [];
     const repo = repositories.find(r => r.url === repoUrl);
     
@@ -191,7 +191,7 @@ async function manageRepository(repositoryManager: RepositoryManager, repoUrl: s
 }
 
 async function toggleRepositoryEnabled(repositoryManager: RepositoryManager, repoUrl: string): Promise<void> {
-    const config = vscode.workspace.getConfiguration('cursorRules');
+    const config = vscode.workspace.getConfiguration('cursorProjectRules');
     const repositories = config.get<Repository[]>('repositories') || [];
     const repoIndex = repositories.findIndex(r => r.url === repoUrl);
     
@@ -219,7 +219,7 @@ async function updateRepository(repositoryManager: RepositoryManager, repoUrl: s
 }
 
 async function toggleAutoUpdate(repositoryManager: RepositoryManager, repoUrl: string): Promise<void> {
-    const config = vscode.workspace.getConfiguration('cursorRules');
+    const config = vscode.workspace.getConfiguration('cursorProjectRules');
     const repositories = config.get<Repository[]>('repositories') || [];
     const repoIndex = repositories.findIndex(r => r.url === repoUrl);
     
@@ -247,7 +247,7 @@ async function changeBranch(repositoryManager: RepositoryManager, repoUrl: strin
     
     if (!branchInput) return;
     
-    const config = vscode.workspace.getConfiguration('cursorRules');
+    const config = vscode.workspace.getConfiguration('cursorProjectRules');
     const repositories = config.get<Repository[]>('repositories') || [];
     const repoIndex = repositories.findIndex(r => r.url === repoUrl);
     
@@ -276,7 +276,7 @@ async function changeRulesDir(repositoryManager: RepositoryManager, repoUrl: str
     
     if (!rulesDirInput) return;
     
-    const config = vscode.workspace.getConfiguration('cursorRules');
+    const config = vscode.workspace.getConfiguration('cursorProjectRules');
     const repositories = config.get<Repository[]>('repositories') || [];
     const repoIndex = repositories.findIndex(r => r.url === repoUrl);
     

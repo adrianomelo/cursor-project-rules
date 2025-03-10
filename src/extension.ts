@@ -12,33 +12,33 @@ export async function activate(context: vscode.ExtensionContext) {
     await ruleManager.initialize();
     
     // Register commands
-    let disposable = vscode.commands.registerCommand('cursorRules.addRule', () => {
+    let disposable = vscode.commands.registerCommand('cursorProjectRules.addRule', () => {
         return addCursorRuleCommand(context);
     });
     context.subscriptions.push(disposable);
     
-    disposable = vscode.commands.registerCommand('cursorRules.addAllRules', () => {
+    disposable = vscode.commands.registerCommand('cursorProjectRules.addAllRules', () => {
         return addAllRulesCommand(context);
     });
     context.subscriptions.push(disposable);
     
-    disposable = vscode.commands.registerCommand('cursorRules.refreshRepositories', () => {
+    disposable = vscode.commands.registerCommand('cursorProjectRules.refreshRepositories', () => {
         return refreshRepositoriesCommand(context);
     });
     context.subscriptions.push(disposable);
     
-    disposable = vscode.commands.registerCommand('cursorRules.manageRepositories', () => {
+    disposable = vscode.commands.registerCommand('cursorProjectRules.manageRepositories', () => {
         return manageRepositoriesCommand(context);
     });
     context.subscriptions.push(disposable);
     
-    disposable = vscode.commands.registerCommand('cursorRules.addMultipleRules', () => {
+    disposable = vscode.commands.registerCommand('cursorProjectRules.addMultipleRules', () => {
         return addMultipleRulesCommand(context);
     });
     context.subscriptions.push(disposable);
     
     // Auto-update repositories if configured
-    const config = vscode.workspace.getConfiguration('cursorRules');
+    const config = vscode.workspace.getConfiguration('cursorProjectRules');
     const repositories = config.get<any[]>('repositories') || [];
     const hasAutoUpdateEnabled = repositories.some(repo => repo.enabled && repo.autoUpdate);
     

@@ -50,7 +50,7 @@ export class RuleManager {
             throw new Error('No workspace folder open');
         }
         
-        const config = vscode.workspace.getConfiguration('cursorRules');
+        const config = vscode.workspace.getConfiguration('cursorProjectRules');
         const localRulesDir = config.get<string>('localRulesDir') || '.cursor/rules';
         
         return path.join(workspaceFolders[0].uri.fsPath, localRulesDir);

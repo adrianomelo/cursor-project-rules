@@ -1,6 +1,6 @@
-# Cursor Rules
+# Cursor Project Rules
 
-A Visual Studio Code extension for managing cursor rules from multiple Git repositories.
+A Visual Studio Code extension for managing AI coding assistant rules from multiple Git repositories.
 
 ## Features
 

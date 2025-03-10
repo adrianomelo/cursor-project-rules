@@ -1,6 +1,6 @@
 {
-  "name": "cursor-rules-extension",
-  "displayName": "Cursor Rules",
+  "name": "cursor-project-rules",
+  "displayName": "Cursor Project Rules",
   "description": "Fetch, install, and manage .mdc rule files from Git repositories to customize AI behavior in Cursor. Configure multiple rule sources and deploy them to your workspace.",
   "version": "1.0.2",
   "author": "Adriano Melo",
@@ -14,40 +14,40 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:cursorRules.addRule",
-    "onCommand:cursorRules.addMultipleRules",
-    "onCommand:cursorRules.addAllRules",
-    "onCommand:cursorRules.refreshRepositories",
-    "onCommand:cursorRules.manageRepositories"
+    "onCommand:cursorProjectRules.addRule",
+    "onCommand:cursorProjectRules.addMultipleRules",
+    "onCommand:cursorProjectRules.addAllRules",
+    "onCommand:cursorProjectRules.refreshRepositories",
+    "onCommand:cursorProjectRules.manageRepositories"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "cursorRules.addRule",
-        "title": "Cursor Rules: Add Specific Rules"
+        "command": "cursorProjectRules.addRule",
+        "title": "Cursor Project Rules: Add Specific Rules"
       },
       {
-        "command": "cursorRules.addMultipleRules",
-        "title": "Cursor Rules: Add Multiple Rules"
+        "command": "cursorProjectRules.addMultipleRules",
+        "title": "Cursor Project Rules: Add Multiple Rules"
       },
       {
-        "command": "cursorRules.addAllRules",
-        "title": "Cursor Rules: Add All Available Rules"
+        "command": "cursorProjectRules.addAllRules",
+        "title": "Cursor Project Rules: Add All Available Rules"
       },
       {
-        "command": "cursorRules.refreshRepositories",
-        "title": "Cursor Rules: Refresh Rule Repositories"
+        "command": "cursorProjectRules.refreshRepositories",
+        "title": "Cursor Project Rules: Refresh Rule Repositories"
       },
       {
-        "command": "cursorRules.manageRepositories",
-        "title": "Cursor Rules: Manage Rule Repositories"
+        "command": "cursorProjectRules.manageRepositories",
+        "title": "Cursor Project Rules: Manage Rule Repositories"
       }
     ],
     "configuration": {
-      "title": "Cursor Rules",
+      "title": "Cursor Project Rules",
       "properties": {
-        "cursorRules.repositories": {
+        "cursorProjectRules.repositories": {
           "type": "array",
           "default": [
             {
@@ -99,7 +99,7 @@
             ]
           }
         },
-        "cursorRules.localRulesDir": {
+        "cursorProjectRules.localRulesDir": {
           "type": "string",
           "default": ".cursor/rules",
           "description": "Local directory where rules will be installed (relative to workspace root)"

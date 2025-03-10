@@ -43,7 +43,7 @@ export class RepositoryManager {
     }
 
     private getRepositories(): Repository[] {
-        const config = vscode.workspace.getConfiguration('cursorRules');
+        const config = vscode.workspace.getConfiguration('cursorProjectRules');
         return config.get<Repository[]>('repositories') || [];
     }
     
@@ -178,7 +178,7 @@ export class RepositoryManager {
         }
         
         // Update configuration
-        await vscode.workspace.getConfiguration('cursorRules').update(
+        await vscode.workspace.getConfiguration('cursorProjectRules').update(
             'repositories', 
             repos, 
             vscode.ConfigurationTarget.Global
@@ -210,7 +210,7 @@ export class RepositoryManager {
         const repos = this.getRepositories().filter(r => r.url !== repoUrl);
         
         // Update configuration
-        await vscode.workspace.getConfiguration('cursorRules').update(
+        await vscode.workspace.getConfiguration('cursorProjectRules').update(
             'repositories', 
             repos, 
             vscode.ConfigurationTarget.Global

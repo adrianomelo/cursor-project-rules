@@ -41,7 +41,7 @@ export async function addMultipleRulesCommand(context: vscode.ExtensionContext) 
             return;
         }
         
-        const config = vscode.workspace.getConfiguration('cursorRules');
+        const config = vscode.workspace.getConfiguration('cursorProjectRules');
         const localRulesDir = path.join(
             workspaceFolders[0].uri.fsPath, 
             config.get<string>('localRulesDir') || '.cursor/rules'
@@ -96,7 +96,7 @@ export async function addMultipleRulesCommand(context: vscode.ExtensionContext) 
         });
 
         quickPick.items = items;
-        quickPick.title = 'Add Multiple Rules';
+        quickPick.title = 'Cursor Project Rules: Add Multiple Rules';
         quickPick.placeholder = 'Use checkboxes to select/deselect rules, then press Enter';
         quickPick.busy = false;
         
