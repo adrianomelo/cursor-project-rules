@@ -18,7 +18,7 @@ export async function manageRepositoriesCommand(context: vscode.ExtensionContext
             ];
             
             if (repositories.length > 0) {
-                items.push({ label: 'Repository List', kind: vscode.QuickPickItemKind.Separator });
+                // items.push({ label: 'Repository List', kind: vscode.QuickPickItemKind.Separator });
                 
                 repositories.forEach(repo => {
                     items.push({

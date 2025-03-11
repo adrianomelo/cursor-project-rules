@@ -61,32 +61,18 @@ export async function addMultipleRulesCommand(context: vscode.ExtensionContext) 
             }
         }
 
-        // Group rules by repository
-        const rulesByRepo: Map<string, Rule[]> = new Map();
-        rules.forEach(rule => {
-            const repoRules = rulesByRepo.get(rule.repoUrl) || [];
-            repoRules.push(rule);
-            rulesByRepo.set(rule.repoUrl, repoRules);
-        });
-
-        // Create quick pick items with repository groups
-        const items: RuleQuickPickItem[] = [];
-        rulesByRepo.forEach((repoRules, repoUrl) => {
-            // Skip repository separator headers - they will no longer be displayed
-            const repoDisplayName = getRepoDisplayName(repoUrl);
+        // Create quick pick items directly from the flat list of rules
+        const items: RuleQuickPickItem[] = rules.map(rule => {
+            const isInstalled = installedRuleNames.includes(rule.name);
             
-            // Add rule items with checkbox indicators in the label and repository information
-            repoRules.forEach(rule => {
-                const isInstalled = installedRuleNames.includes(rule.name);
-                items.push({
-                    // Use Unicode checkbox symbols to emphasize selection state
-                    label: `$(check-square) ${rule.name}`,
-                    description: `${repoDisplayName} ${isInstalled ? '$(check) Already installed' : ''}`,
-                    detail: repoUrl,
-                    rule: rule,
-                    alwaysShow: isInstalled // Always show installed rules
-                });
-            });
+            return {
+                // Use Unicode checkbox symbols to emphasize selection state
+                label: `$(check-square) ${rule.name}`,
+                description: '',
+                detail: rule.repoUrl,
+                rule: rule,
+                alwaysShow: isInstalled // Always show installed rules
+            };
         });
 
         quickPick.items = items;
@@ -184,26 +170,3 @@ export async function addMultipleRulesCommand(context: vscode.ExtensionContext) 
 interface RuleQuickPickItem extends vscode.QuickPickItem {
     rule: Rule | null;
 }
-
-// Helper function to extract a shorter display name from the repository URL
-function getRepoDisplayName(repoUrl: string): string {
-    try {
-        // Extract owner/repo from GitHub URL
-        if (repoUrl.includes('github.com')) {
-            const parts = repoUrl.split('/');
-            // Look for the owner and repo parts
-            const githubIndex = parts.findIndex(part => part.includes('github.com'));
-            if (githubIndex >= 0 && parts.length > githubIndex + 2) {
-                const owner = parts[githubIndex + 1];
-                const repo = parts[githubIndex + 2].replace('.git', '');
-                return `${owner}/${repo}`;
-            }
-        }
-        
-        // For non-GitHub URLs or if parsing fails, return a shortened form
-        return new URL(repoUrl).hostname + '/' + repoUrl.split('/').pop()?.replace('.git', '');
-    } catch (error) {
-        // If parsing fails, just return the URL
-        return repoUrl;
-    }
-} 

@@ -25,29 +25,13 @@ export async function addCursorRuleCommand(context: vscode.ExtensionContext) {
             return;
         }
 
-        // Group rules by repository
-        const rulesByRepo: Map<string, Rule[]> = new Map();
-        rules.forEach(rule => {
-            const repoRules = rulesByRepo.get(rule.repoUrl) || [];
-            repoRules.push(rule);
-            rulesByRepo.set(rule.repoUrl, repoRules);
-        });
-
-        const items: RuleQuickPickItem[] = [];
-        rulesByRepo.forEach((repoRules, repoUrl) => {
-            // Skip repository separator headers - they will no longer be displayed
-            
-            // Add rule items with repository information
-            repoRules.forEach(rule => {
-
-                items.push({
-                    label: `$(file) ${rule.name}`,
-                    description: '', // Show friendly repo name
-                    detail: rule.repoUrl, // Show full repo URL in detail
-                    rule
-                });
-            });
-        });
+        // Create items directly from the flat list of rules
+        const items: RuleQuickPickItem[] = rules.map(rule => ({           
+            label: `$(file) ${rule.name}`,
+            description: '',
+            detail: rule.repoUrl,
+            rule
+        }));
 
         quickPick.items = items;
         quickPick.placeholder = 'Select a rule to install';
