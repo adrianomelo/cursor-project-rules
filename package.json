@@ -2,7 +2,7 @@
   "name": "cursor-project-rules",
   "displayName": "Cursor Project Rules",
   "description": "Fetch, install, and manage .mdc rule files from Git repositories to customize AI behavior in Cursor. Configure multiple rule sources and deploy them to your workspace.",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "author": "Adriano Melo",
   "publisher": "adrianomelo",
   "icon": "images/icon.png",
