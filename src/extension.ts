@@ -6,6 +6,24 @@ import { manageRepositoriesCommand } from './commands/manageRepositories';
 import { addMultipleRulesCommand } from './commands/addMultipleRules';
 import { RuleManager } from './utils/ruleManager';
 
+// Default repositories from the marketplace version
+const DEFAULT_REPOSITORIES = [
+    {
+        "url": "https://github.com/adrianomelo/cursor-rules.git",
+        "enabled": true,
+        "branch": "main",
+        "rulesDir": "rules",
+        "autoUpdate": true
+    },
+    {
+        "url": "https://github.com/sanjeed5/awesome-cursor-rules-mdc.git",
+        "enabled": true,
+        "branch": "main",
+        "rulesDir": "rules-mdc",
+        "autoUpdate": true
+    }
+];
+
 export async function activate(context: vscode.ExtensionContext) {
     // Initialize rule manager
     const ruleManager = RuleManager.getInstance(context);
@@ -52,4 +70,22 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 }
 
-export function deactivate() {} 
+export function deactivate(): Thenable<void> {
+    // Clean up repositories when extension is uninstalled
+    return new Promise<void>((resolve) => {
+        try {
+            // Restore default repositories from the marketplace version
+            vscode.workspace.getConfiguration('cursorProjectRules').update(
+                'repositories',
+                DEFAULT_REPOSITORIES,
+                vscode.ConfigurationTarget.Global
+            ).then(() => {
+                console.log('Restored default repositories during extension deactivation');
+                resolve();
+            });
+        } catch (error) {
+            console.error('Error during extension deactivation:', error);
+            resolve(); // Resolve even on error to allow clean shutdown
+        }
+    });
+} 
